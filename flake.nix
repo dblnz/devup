@@ -51,7 +51,7 @@
       # Home Manager configurations for different systems
       homeConfigurations = {
         # Linux configuration
-        "dblnz@linux" = mkHome {
+        "linux" = mkHome {
           system = "x86_64-linux";
           username = "dblnz";
           homeDirectory = "/home/dblnz";
@@ -59,7 +59,7 @@
         };
 
         # macOS configuration
-        "dblnz@darwin" = mkHome {
+        "darwin" = mkHome {
           system = "aarch64-darwin";  # Apple Silicon
           username = "dblnz";
           homeDirectory = "/Users/dblnz";
@@ -67,7 +67,7 @@
         };
 
         # macOS Intel configuration
-        "dblnz@darwin-intel" = mkHome {
+        "darwin-intel" = mkHome {
           system = "x86_64-darwin";  # Intel Mac
           username = "dblnz";
           homeDirectory = "/Users/dblnz";
