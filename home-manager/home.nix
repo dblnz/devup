@@ -3,6 +3,7 @@
 {
   # Import all module configurations
   imports = [
+    ./modules/ai-agents.nix
     ./modules/bash.nix
     ./modules/cli-tools.nix
     ./modules/common-packages.nix

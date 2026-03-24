@@ -35,15 +35,6 @@ nix develop
 
 Available templates: rust, c, node, python, go
 
-## AI CLI dev shells
-
-To enter the bundled AI CLIs, run from the repo root:
-- `nix develop .#claude` for the Claude Code CLI
-- `nix develop .#copilot` for the GitHub Copilot CLI
-- `nix develop .#codex` for the Codex CLI
-
-Each shell keeps the CLI isolated to that environment; exit the shell to leave no residue.
-
 ## Manage with Home Manager
 
 Apply changes again later using the same profile that bootstrap selected:
