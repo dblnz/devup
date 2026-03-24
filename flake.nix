@@ -40,7 +40,6 @@
                 inherit username homeDirectory;
                 stateVersion = "26.05";
               };
-              # Pass the nvim-config input to modules if it exists
               _module.args = {
                 nvim-config = inputs.nvim-config;
               };
