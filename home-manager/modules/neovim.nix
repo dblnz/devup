@@ -16,10 +16,9 @@
     withNodeJs = true;
     withPython3 = true;
 
-    initLua = ''
-      -- The lua config will be loaded from ~/.config/nvim
-      -- This is just a placeholder for any additional Nix-managed config
-    '';
+    # NOTE: Do NOT set initLua here. The entire ~/.config/nvim directory is
+    # symlinked to the mutable nvim-dotfiles clone via xdg.configFile below,
+    # and a Nix-managed init.lua would conflict with that symlink.
 
     # Neovim plugins managed by Nix (optional)
     # The plugins are managed using lazy.nvim
