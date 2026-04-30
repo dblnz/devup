@@ -1,8 +1,16 @@
-{ config, pkgs, lib, nvim-config, ... }:
+{ config, pkgs, lib, nvim-config, neovim-src, ... }:
 
+let
+  # Build neovim from source using the pinned tag
+  neovim-custom = (pkgs.neovim-unwrapped.overrideAttrs (oldAttrs: {
+    version = "0.12.2";
+    src = neovim-src;
+  }));
+in
 {
   programs.neovim = {
     enable = true;
+    package = neovim-custom;
 
     # Use neovim as the default editor
     defaultEditor = true;

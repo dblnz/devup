@@ -13,6 +13,11 @@
       url = "github:dblnz/nvim-dotfiles";
       flake = false;
     };
+
+    neovim-src = {
+      url = "github:neovim/neovim/v0.12.2";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
@@ -42,6 +47,7 @@
               };
               _module.args = {
                 nvim-config = inputs.nvim-config;
+                neovim-src = inputs.neovim-src;
               };
             }
           ] ++ extraModules;
