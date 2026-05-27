@@ -32,6 +32,7 @@
 
     # Session path additions
     sessionPath = [
+      "$HOME/.cargo/bin"
       "$HOME/.local/bin"
       "$HOME/bin"
     ];
