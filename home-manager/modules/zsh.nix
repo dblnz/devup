@@ -20,6 +20,7 @@
 
     # Shell aliases
     shellAliases = {
+      cat = "bat";
       grep = "grep --color";
       egrep = "egrep --color";
       tree = "tree -C";
