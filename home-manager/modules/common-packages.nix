@@ -11,20 +11,18 @@
     gawk
 
     # Compilers/Interpretors
-    clang_18
-    llvmPackages_18.libclang # libclang runtime for tools like Rust bindgen/clang-sys
     flatbuffers
     #gcc             # C/C++ compiler
     go
     lua
     nodejs_24
-    rustup
     typescript
 
     # Development tools
     cmake           # Build system generator
     gnumake         # Make build tool
     git
+    lazygit
     git-lfs
     gh  # GitHub CLI
     just

@@ -28,8 +28,6 @@
       VISUAL = "nvim";
       LANG = "en_US.UTF-8";
       LC_ALL = "en_US.UTF-8";
-      # Help Rust/clang-sys/bindgen find Nix's libclang instead of system paths
-      LIBCLANG_PATH = "${lib.getLib pkgs.llvmPackages_18.libclang}/lib";
     };
 
     # Session path additions
