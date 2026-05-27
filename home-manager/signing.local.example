@@ -1,0 +1,14 @@
+# Per-machine Git signing — not managed by Home Manager.
+#
+#   mkdir -p ~/.config/git
+#   cp ~/path/to/devup/home-manager/signing.local.example ~/.config/git/signing.local
+#   $EDITOR ~/.config/git/signing.local
+#
+# Then create ~/.ssh/allowed_signers (one line: email, namespaces="git", and your .pub):
+#   echo 'dblnz@pm.me namespaces="git" '"$(cat ~/.ssh/YOUR_KEY.pub)" > ~/.ssh/allowed_signers
+
+[user]
+	signingkey = ~/.ssh/YOUR_KEY.pub
+
+[gpg "ssh"]
+	allowedSignersFile = ~/.ssh/allowed_signers

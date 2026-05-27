@@ -4,6 +4,19 @@
   programs.git = {
     enable = true;
 
+    # SSH commit signing (shared). Key path and allowed_signers are per-machine —
+    # see ~/.config/git/signing.local (copy from signing.local.example).
+    signing = {
+      format = "ssh";
+      signByDefault = true;
+    };
+
+    includes = [
+      {
+        path = "${config.home.homeDirectory}/.config/git/signing.local";
+      }
+    ];
+
     settings = {
       user = {
         name = "Doru Blânzeanu";
@@ -13,14 +26,6 @@
       credential.helper = "store";
 
       color.ui = "auto";
-
-      commit = {
-        gpgsign = true;
-      };
-
-      gpg = {
-        format = "ssh";
-      };
 
       core = {
         editor = "nvim";
