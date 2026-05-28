@@ -67,18 +67,11 @@
     duf        # Better df
     dust       # Better du
 
-    # Wasm
-    wasmtime
-    wasm-tools
-    wit-bindgen
-    wkg
-
     # Utilities
     pango harfbuzz freetype fontconfig cairo glib
 
     # Terminal enhancements
     tmux
-    zellij     # Modern terminal multiplexer
 
     # Multiplexer plugin managers
     # (tmux plugins will be managed by home-manager)

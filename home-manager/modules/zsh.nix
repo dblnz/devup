@@ -43,6 +43,17 @@
       hmb = "home-manager build --flake .";
     };
 
+    # Ensure Nix environment is available (survives system/WSL resets)
+    envExtra = ''
+      if [ -z "$NIX_PROFILES" ]; then
+        if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+          . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+        elif [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+          . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+        fi
+      fi
+    '';
+
     # Additional shell options
     initContent = ''
       # FZF integration (if installed)
