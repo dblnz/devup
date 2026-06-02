@@ -12,6 +12,6 @@
     # Add Linux-specific vars here if needed
   };
 
-  # Linux-specific systemd services can go here
-  # systemd.user.services = {};
+  # SSH agent as a systemd user service
+  services.ssh-agent.enable = true;
 }
