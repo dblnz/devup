@@ -52,19 +52,18 @@ in
     ];
   };
 
-  # Seed ~/.config/nvim-dotfiles from the flake input on first activation.
-  # Copies from the Nix store so the result is a mutable, editable directory.
-  # Subsequent activations leave the directory untouched.
+  # Sync ~/.config/nvim-dotfiles from the flake input on every activation,
+  # then symlink ~/.config/nvim → the mutable local copy so edits are live.
+  # NOTE: This overwrites local changes in nvim-dotfiles with the flake input.
   home.activation.seedNvimConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     NVIM_SRC="${config.home.homeDirectory}/.config/nvim-dotfiles"
-    if [ ! -d "$NVIM_SRC" ]; then
-      run cp -r "${nvim-config}" "$NVIM_SRC"
-      run chmod -R u+w "$NVIM_SRC"
+    NVIM_LINK="${config.home.homeDirectory}/.config/nvim"
+    run rm -rf "$NVIM_SRC"
+    run cp -r "${nvim-config}" "$NVIM_SRC"
+    run chmod -R u+w "$NVIM_SRC"
+    if [ ! -L "$NVIM_LINK" ] || [ "$(readlink "$NVIM_LINK")" != "$NVIM_SRC" ]; then
+      run rm -rf "$NVIM_LINK"
+      run ln -s "$NVIM_SRC" "$NVIM_LINK"
     fi
   '';
-
-  # Symlink ~/.config/nvim → the mutable local copy so edits are live
-  # without needing a home-manager switch round-trip.
-  xdg.configFile."nvim".source =
-    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/nvim-dotfiles";
 }

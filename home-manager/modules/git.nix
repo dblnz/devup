@@ -39,10 +39,6 @@
         prompt = false;
       };
 
-      pager = {
-        log = false;
-      };
-
       # Aliases
       alias = {
         # Branch management
