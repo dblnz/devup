@@ -10,7 +10,7 @@
     };
 
     nvim-config = {
-      url = "github:dblnz/nvim-dotfiles";
+      url = "github:dblnz/nvim-dotfiles/slim";
       flake = false;
     };
 

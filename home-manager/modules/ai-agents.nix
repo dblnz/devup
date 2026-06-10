@@ -12,7 +12,7 @@ let
       };
       copilotAsset = {
         name = "copilot-linux-x64.tar.gz";
-        hash = "sha256-2kTBEpgq0rJkUHNQFagN2VBYySxZ35MmPwlIglLAHLU=";
+        hash = "sha256-IovYAqNprWs0d74cCFENVVYoux/IpTomM38zZln4F9s=";
       };
     };
     "aarch64-linux" = {
@@ -23,7 +23,7 @@ let
       };
       copilotAsset = {
         name = "copilot-linux-arm64.tar.gz";
-        hash = "sha256-ki6U3wy9ez/Wilp9oBJzta6eoVk+Gi26gaS1C+4x2lo=";
+        hash = "sha256-IlyHdCOUCWVX7F0cxVk2JlTaiVpnLVp6pv3CBLHJXTY=";
       };
     };
     "x86_64-darwin" = {
@@ -34,7 +34,7 @@ let
       };
       copilotAsset = {
         name = "copilot-darwin-x64.tar.gz";
-        hash = "sha256-jNnCexSg9JIbZJPFkuLEopo+yNQbwBBQTTdC+AsLyVM=";
+        hash = "sha256-j3pxBbegJb9XMxs0Q1eNzT+uJSl3yCRr55egHP+6tCY=";
       };
     };
     "aarch64-darwin" = {
@@ -45,7 +45,7 @@ let
       };
       copilotAsset = {
         name = "copilot-darwin-arm64.tar.gz";
-        hash = "sha256-1mBj9wZ3er1SDR+pfrDYeK0hny5r71aiy6E3ioKjAzQ=";
+        hash = "sha256-RI9VC4zsshbGDP9c36pG/phGBsMW/bYrW17YMkju8K4=";
       };
     };
   }.${system} or (throw "Unsupported system: ${system}");
@@ -100,7 +100,7 @@ let
     version = "0.79.0";
 
     src = pkgs.fetchurl {
-      name = codexArtifact.name;
+      name = "codex-cli-${version}-${codexArtifact.name}";
       url = "https://github.com/openai/codex/releases/download/rust-v${version}/${codexArtifact.name}";
       hash = codexArtifact.hash;
     };
@@ -138,10 +138,10 @@ let
 
   copilot-cli = pkgs.stdenv.mkDerivation rec {
     pname = "copilot-cli";
-    version = "0.0.376";
+    version = "1.0.61";
 
     src = pkgs.fetchurl {
-      name = copilotArtifact.name;
+      name = "copilot-cli-${version}-${copilotArtifact.name}";
       url = "https://github.com/github/copilot-cli/releases/download/v${version}/${copilotArtifact.name}";
       hash = copilotArtifact.hash;
     };
