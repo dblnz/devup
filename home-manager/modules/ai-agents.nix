@@ -65,7 +65,7 @@ let
     src = pkgs.fetchurl {
       name = "claude-code-${version}-${claudePlatform}";
       url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/${version}/${claudePlatform}/claude";
-      sha256 = "sha256-fWMBJr1vqDcnIKSAVahYaXQbB2sUNEAEXIlWXPPGWig=";
+      sha256 = "sha256-x5OftL0QvQ5aygf4y8TOqFxvzMcdNnpYVm0lTrE/IJg=";
     };
 
     dontUnpack = true;
