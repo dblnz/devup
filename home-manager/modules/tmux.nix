@@ -54,6 +54,11 @@
       bind C-k resize-pane -U 2
       bind C-l resize-pane -R 5
 
+      # Pane resizing to max and back to previous
+      bind H run-shell 'tmux set -w @saved_layout "$(tmux display-message -p "#{window_layout}")"; tmux resize-pane -y 999'
+      bind W run-shell 'tmux set -w @saved_layout "$(tmux display-message -p "#{window_layout}")"; tmux resize-pane -x 999'
+      bind R run-shell 'tmux select-layout "$(tmux show -wv @saved_layout)"'
+
       # Cycle through panes
       bind o select-pane -t :.+
       bind i select-pane -t :.-
