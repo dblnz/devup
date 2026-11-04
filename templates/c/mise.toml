@@ -1,0 +1,5 @@
+# C/C++ project. Compilers and libs come from the OS package manager:
+#   Arch:  pacman -S base-devel clang ninja meson ccache gdb lldb valgrind pkg-config
+#   macOS: brew install llvm ninja meson ccache pkg-config
+[tools]
+cmake = "latest"

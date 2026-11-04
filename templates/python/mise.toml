@@ -1,0 +1,10 @@
+[env]
+_.python.venv = { path = ".venv", create = true }
+
+[tools]
+python = "3.11"
+"pipx:black" = "latest"
+"pipx:flake8" = "latest"
+"pipx:pylint" = "latest"
+"pipx:mypy" = "latest"
+"pipx:python-lsp-server" = "latest"

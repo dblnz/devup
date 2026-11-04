@@ -1,0 +1,21 @@
+---
+- name: Install macchanger
+  community.general.pacman:
+    name: macchanger
+    state: present
+  become: true
+
+- name: Install macspoof systemd template unit
+  ansible.builtin.copy:
+    src: macspoof@.service
+    dest: /etc/systemd/system/macspoof@.service
+    mode: "0644"
+  become: true
+  notify: Reload systemd
+
+- name: Enable macspoof for the configured interface
+  ansible.builtin.systemd:
+    name: "macspoof@{{ macspoof_interface }}.service"
+    enabled: true
+    daemon_reload: true
+  become: true

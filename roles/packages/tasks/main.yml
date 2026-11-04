@@ -1,0 +1,17 @@
+---
+- name: Load OS-specific package list
+  ansible.builtin.include_vars: "{{ ansible_facts['os_family'] | lower }}.yml"
+
+- name: Install packages (pacman)
+  community.general.pacman:
+    name: "{{ system_packages }}"
+    state: present
+    update_cache: true
+  become: true
+  when: ansible_facts['os_family'] == 'Archlinux'
+
+- name: Install packages (Homebrew)
+  community.general.homebrew:
+    name: "{{ system_packages }}"
+    state: present
+  when: ansible_facts['os_family'] == 'Darwin'

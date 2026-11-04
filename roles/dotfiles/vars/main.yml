@@ -1,0 +1,11 @@
+---
+dotfiles:
+  - { src: zsh/zshrc, dest: .zshrc }
+  - { src: zsh/zshenv, dest: .zshenv }
+  - { src: bash/bashrc, dest: .bashrc }
+  - { src: tmux/tmux.conf, dest: .tmux.conf }
+  - { src: starship/starship.toml, dest: .config/starship.toml }
+  - { src: bat/config, dest: .config/bat/config }
+  - { src: htop/htoprc, dest: .config/htop/htoprc }
+  - { src: mise/config.toml, dest: .config/mise/config.toml }
+  - { src: git/gitignore_global, dest: .config/git/ignore }

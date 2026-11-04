@@ -1,0 +1,26 @@
+---
+# Plain dotfiles in files/ are symlinked into $HOME.
+- name: Set repo dotfiles path
+  ansible.builtin.set_fact:
+    dotfiles_src: "{{ playbook_dir }}/files"
+
+- name: Ensure parent directories exist
+  ansible.builtin.file:
+    path: "{{ user_home }}/{{ item.dest | dirname }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ dotfiles }}"
+
+- name: Symlink dotfiles
+  ansible.builtin.file:
+    src: "{{ dotfiles_src }}/{{ item.src }}"
+    dest: "{{ user_home }}/{{ item.dest }}"
+    state: link
+    force: true
+  loop: "{{ dotfiles }}"
+
+- name: Clone tmux plugin manager
+  ansible.builtin.git:
+    repo: https://github.com/tmux-plugins/tpm.git
+    dest: "{{ user_home }}/.tmux/plugins/tpm"
+    version: v3.1.0

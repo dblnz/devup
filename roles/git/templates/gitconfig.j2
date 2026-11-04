@@ -1,0 +1,50 @@
+[user]
+	name = {{ git_user_name }}
+	email = {{ git_user_email }}
+
+[commit]
+	gpgsign = true
+
+[gpg]
+	format = ssh
+
+[include]
+	# Per-machine signing key; see signing.local.example
+	path = ~/.config/git/signing.local
+
+[credential]
+	helper = store
+
+[color]
+	ui = auto
+
+[core]
+	editor = nvim
+	pager = delta
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	light = false
+	line-numbers = true
+	side-by-side = true
+
+[diff]
+	tool = vimdiff
+
+[difftool]
+	prompt = false
+
+[alias]
+	b = branch -vv
+	co = checkout
+	ci = commit --signoff
+	d = diff
+	st = status
+	l = log --decorate --graph --oneline
+	dag = log --graph --format='format:%C(yellow)%h%C(reset) %C(blue)"%an" <%ae>%C(reset) %C(magenta)%cr%C(reset)%C(auto)%d%C(reset)%n%s' --date-order
+	ld = log --decorate --graph --oneline --pretty=format:'%C(bold red)%h%Creset %Cgreen(%cr) %C(bold blue)<%aN>%Creset %s %C(yellow)%d%Creset' --abbrev-commit
+	lg = log --graph --pretty=format:'commit: %C(bold red)%h%Creset %C(red)<%H>%Creset %C(bold magenta)%d %Creset%ndate: %C(bold yellow)%cd %Creset%C(yellow)%cr%Creset%nauthor: %C(bold blue)%an%Creset %C(blue)<%ae>%Creset%n%C(cyan)%s%n%Creset'
+	me = !git lg --author='{{ git_user_name }}'

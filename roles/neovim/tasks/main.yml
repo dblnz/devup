@@ -1,0 +1,9 @@
+---
+# Plain clone of the neovim config. Local edits are never overwritten.
+- name: Clone neovim config
+  ansible.builtin.git:
+    repo: "{{ nvim_config_repo }}"
+    dest: "{{ user_home }}/.config/nvim"
+    version: main
+    update: true
+    force: false

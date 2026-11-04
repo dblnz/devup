@@ -1,21 +1,9 @@
-# Development Setup (Nix + Home Manager)
+# devup
 
-This is my personal development setup, it isn't much, but it helps me go through the day without dealing with IDEs.
-Minimal instructions to get started, use templates, manage Home Manager, and roll back if needed.
-
-> [!NOTE]
-> This configuration uses `dblnz` as username.
-> To modify this, you need to do a local checkout and modify the repository
+Personal development setup as an Ansible playbook. Supports Arch Linux and macOS (Homebrew).
+It runs locally against the current user. Nothing is hardcoded to a username.
 
 ## Quick start
-
-If you have `nix` installed:
-
-```sh
-nix run home-manager/master -- switch --flake github:dblnz/devup#linux -b backup
-```
-
-If not, you can use:
 
 ```sh
 git clone <repo-url> ~/devup
@@ -23,86 +11,59 @@ cd ~/devup
 ./bootstrap.sh
 ```
 
-The bootstrap script installs Nix if needed, enables flakes, and activates the appropriate Home Manager profile for your OS.
+`bootstrap.sh` installs Ansible (pacman or brew), installs the pinned collections and runs
+`ansible-playbook site.yml --ask-become-pass`. Re-running it is the normal update flow.
 
-## Use project templates
-
-From a new or empty project directory:
-
-```sh
-# If cloned locally
-nix flake init -t ~/devup#rust
-
-# Or directly from GitHub
-nix flake init -t github:dblnz/devup#rust
-
-# Enter the dev environment
-nix develop
-```
-
-Available templates: rust, c, node, python, go
-
-## Manage with Home Manager
-
-Apply changes again later using the same profile that bootstrap selected:
+Run only some roles with tags:
 
 ```sh
-cd ~/devup
-# Linux
-home-manager switch --flake .#linux
-# macOS (Apple Silicon)
-home-manager switch --flake .#darwin
-# macOS (Intel)
-home-manager switch --flake .#darwin-intel
+ansible-playbook site.yml --tags dotfiles,git
 ```
 
-Build without switching (evaluation/build only):
+## Layout
+
+| Path | Purpose |
+|------|---------|
+| `site.yml` | Entry point: runs the roles below |
+| `roles/packages` | pacman / Homebrew packages (lists in `roles/packages/vars/<os>.yml`) |
+| `roles/shell` | Sets zsh as the login shell |
+| `roles/dotfiles` | Symlinks `files/<tool>/*` into `$HOME` |
+| `roles/git` | Renders `~/.config/git/config` from `git_user_name` / `git_user_email` |
+| `roles/mise` | Installs global tools from `files/mise/config.toml` |
+| `roles/neovim` | Clones the nvim config into `~/.config/nvim` (never overwrites local edits) |
+| `roles/macspoof` | Opt-in MAC address spoofing systemd unit (Linux) |
+| `templates/<lang>/mise.toml` | Starter per-project tool pins |
+
+Per-machine overrides go in `host_vars/localhost.yml` (git-ignored):
+
+```yaml
+git_user_name: "Your Name"
+git_user_email: you@example.com
+macspoof_enabled: true
+macspoof_interface: wlan0
+```
+
+## Git signing
+
+SSH signing is configured per machine. Copy `files/git/signing.local.example` to
+`~/.config/git/signing.local` and edit it.
+
+## Reproducible tool versions (mise)
+
+Global tools (neovim, node, go, python, rust, lazygit, claude-code, codex, copilot) are pinned in
+`files/mise/config.toml`. To bump a version, edit it and run `mise install && mise lock`.
+
+For a project, copy a starter and install:
 
 ```sh
-home-manager build --flake .#linux   # or the matching profile for your OS
+cp ~/devup/templates/rust/mise.toml .
+mise trust && mise install
 ```
 
-## Git commit signing (per machine)
+Languages are pinned by mise. System libraries (clang, pkg-config, openssl, ...) come from the
+OS package manager and are listed in comments inside each template.
 
-Global Git config is managed by Home Manager, but the **signing key is not** — each machine picks its own SSH key via a local file that Git includes.
+## Tests
 
-1. Copy the example and edit the key path for this machine:
-
-```sh
-mkdir -p ~/.config/git
-cp ~/devup/home-manager/signing.local.example ~/.config/git/signing.local
-$EDITOR ~/.config/git/signing.local
-```
-
-Set `signingkey` to your public key (for example `~/.ssh/id_rsa.pub`).
-
-2. Create `~/.ssh/allowed_signers` (required for SSH signing). Use the same email as in `home-manager/modules/git.nix`:
-
-```sh
-echo '<email> namespaces="git" '"$(cat ~/.ssh/YOUR_KEY.pub)" > ~/.ssh/allowed_signers
-chmod 644 ~/.ssh/allowed_signers
-```
-
-3. Apply Home Manager if you have not since enabling signing:
-
-```sh
-home-manager switch --flake ~/devup#linux
-```
-
-4. Add the same `.pub` key on GitHub under **Settings → SSH and GPG keys → Signing keys**, then verify:
-
-```sh
-git config --global user.signingkey
-git commit --allow-empty -m "test signing"
-git log -1 --show-signature
-```
-
-`~/.config/git/signing.local` is not in this repo — do not commit it. Other hosts can use a different key without changing the flake.
-
-## Roll back
-
-If something goes wrong, roll back to the previous Home Manager generation:
-
-```sh
-home-manager switch --rollback
-```
+`tests/run-arch.sh` runs the playbook twice in an `archlinux` Docker container and fails unless
+the second run changes nothing. CI also runs `ansible-lint` and a macOS syntax check.

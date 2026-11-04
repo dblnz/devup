@@ -1,0 +1,19 @@
+---
+- name: Ensure git config directory exists
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/git"
+    state: directory
+    mode: "0755"
+
+- name: Render gitconfig
+  ansible.builtin.template:
+    src: gitconfig.j2
+    dest: "{{ user_home }}/.config/git/config"
+    mode: "0644"
+
+- name: Create empty per-machine signing include if missing
+  ansible.builtin.copy:
+    content: "# Per-machine signing config. See files/git/signing.local.example\n"
+    dest: "{{ user_home }}/.config/git/signing.local"
+    force: false
+    mode: "0644"

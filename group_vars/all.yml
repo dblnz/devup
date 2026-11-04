@@ -1,0 +1,11 @@
+---
+# Personal identity (override in host_vars/localhost.yml when forking)
+git_user_name: "Doru Blânzeanu"
+git_user_email: "dblnz@pm.me"
+
+# Optional MAC address spoofing (Linux only)
+macspoof_enabled: false
+macspoof_interface: wlan0
+
+# Neovim config repository
+nvim_config_repo: https://github.com/dblnz/nvim-dotfiles.git

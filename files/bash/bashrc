@@ -1,0 +1,21 @@
+[[ $- != *i* ]] && return
+
+HISTSIZE=10000
+HISTFILESIZE=20000
+HISTCONTROL=ignoredups:ignorespace
+shopt -s histappend cmdhist checkwinsize
+shopt -s autocd dirspell cdspell 2>/dev/null
+
+alias cat=bat
+alias grep='grep --color'
+alias tree='tree -C'
+alias ll='ls -l'
+alias la='ls -la'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias g=git gs='git status' gd='git diff' ga='git add' gc='git commit' gp='git push' gl='git pull'
+
+command -v mise >/dev/null && eval "$(mise activate bash)"
+command -v zoxide >/dev/null && eval "$(zoxide init bash)"
+command -v direnv >/dev/null && eval "$(direnv hook bash)"
+command -v starship >/dev/null && eval "$(starship init bash)"

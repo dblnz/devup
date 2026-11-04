@@ -1,0 +1,27 @@
+---
+- name: Set up the development environment for the current user
+  hosts: localhost
+  gather_facts: true
+  vars:
+    user_home: "{{ ansible_facts['env']['HOME'] }}"
+  pre_tasks:
+    - name: Fail on unsupported platforms
+      ansible.builtin.assert:
+        that: ansible_facts['os_family'] in ['Archlinux', 'Darwin']
+        fail_msg: "Only Arch Linux and macOS are supported."
+  roles:
+    - role: packages
+      tags: [packages]
+    - role: shell
+      tags: [shell]
+    - role: dotfiles
+      tags: [dotfiles]
+    - role: git
+      tags: [git]
+    - role: mise
+      tags: [mise]
+    - role: neovim
+      tags: [neovim]
+    - role: macspoof
+      tags: [macspoof]
+      when: macspoof_enabled | bool and ansible_facts['os_family'] == 'Archlinux'

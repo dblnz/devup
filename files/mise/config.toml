@@ -1,0 +1,16 @@
+# Global tool versions managed by mise. Bump a version, then run:
+#   mise install && mise lock
+[settings]
+lockfile = true
+experimental = true
+
+[tools]
+node = "24"
+go = "latest"
+python = "3.13"
+rust = "1.91.1"
+neovim = "0.12.2"
+lazygit = "latest"
+"npm:@anthropic-ai/claude-code" = "latest"
+"npm:@openai/codex" = "0.79.0"
+"npm:@github/copilot" = "1.0.61"
