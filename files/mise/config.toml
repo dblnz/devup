@@ -4,6 +4,11 @@
 lockfile = true
 experimental = true
 
+# Use real npm so package postinstall scripts run (the auto-picked aube skips
+# them, which leaves claude-code without its native binary).
+[settings.npm]
+package_manager = "npm"
+
 [tools]
 node = "24"
 go = "latest"
