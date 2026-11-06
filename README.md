@@ -33,6 +33,7 @@ ansible-playbook site.yml --tags dotfiles,git
 | `roles/mise` | Installs global tools from `files/mise/config.toml` |
 | `roles/neovim` | Clones the nvim config into `~/.config/nvim` (never overwrites local edits) |
 | `roles/macspoof` | Opt-in MAC address spoofing systemd unit (Linux) |
+| `roles/snapper` | Opt-in automatic btrfs snapshots with snapper (hourly timeline + cleanup; Fedora/Arch) |
 | `templates/<lang>/mise.toml` | Starter per-project tool pins |
 
 Per-machine overrides go in `host_vars/localhost.yml` (git-ignored):
@@ -42,6 +43,7 @@ git_user_name: "Your Name"
 git_user_email: you@example.com
 macspoof_enabled: true
 macspoof_interface: wlan0
+snapper_enabled: true   # btrfs root only; override snapper_settings for retention
 ```
 
 ## Fedora third-party sources

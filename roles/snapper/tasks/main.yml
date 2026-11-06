@@ -1,0 +1,60 @@
+---
+- name: Check the root filesystem is btrfs
+  ansible.builtin.command: stat -f -c %T /
+  register: snapper_root_fs
+  changed_when: false
+
+- name: Fail if root is not btrfs
+  ansible.builtin.assert:
+    that: snapper_root_fs.stdout == 'btrfs'
+    fail_msg: "snapper role requires a btrfs root filesystem (found {{ snapper_root_fs.stdout }})."
+
+- name: Install snapper (Fedora)
+  ansible.builtin.package:
+    name:
+      - snapper
+      - python3-dnf-plugin-snapper
+    state: present
+  become: true
+  when: ansible_facts['distribution'] == 'Fedora'
+
+- name: Install snapper (Arch)
+  ansible.builtin.package:
+    name:
+      - snapper
+      - snap-pac
+    state: present
+  become: true
+  when: ansible_facts['os_family'] == 'Archlinux'
+
+- name: List existing snapper configs
+  ansible.builtin.command: snapper list-configs --columns config
+  register: snapper_existing
+  changed_when: false
+  become: true
+
+- name: Create snapper configs
+  ansible.builtin.command: "snapper -c {{ item.name }} create-config {{ item.path }}"
+  args:
+    creates: "/etc/snapper/configs/{{ item.name }}"
+  loop: "{{ snapper_configs }}"
+  when: item.name not in snapper_existing.stdout_lines
+  become: true
+
+- name: Apply snapper retention settings
+  ansible.builtin.lineinfile:
+    path: "/etc/snapper/configs/{{ item.0.name }}"
+    regexp: "^{{ item.1.key }}="
+    line: '{{ item.1.key }}="{{ item.1.value }}"'
+  loop: "{{ snapper_configs | product(snapper_settings | dict2items) | list }}"
+  become: true
+
+- name: Enable snapper timers
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - snapper-timeline.timer
+    - snapper-cleanup.timer
+  become: true

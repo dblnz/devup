@@ -27,3 +27,6 @@
     - role: macspoof
       tags: [macspoof]
       when: macspoof_enabled | bool and ansible_facts['system'] == 'Linux'
+    - role: snapper
+      tags: [snapper]
+      when: snapper_enabled | bool and ansible_facts['system'] == 'Linux'

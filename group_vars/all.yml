@@ -7,6 +7,9 @@ git_user_email: "dblnz@pm.me"
 macspoof_enabled: false
 macspoof_interface: wlan0
 
+# Optional automatic btrfs snapshots via snapper (Linux, btrfs root only)
+snapper_enabled: false
+
 # Neovim config repository
 nvim_config_repo: https://github.com/dblnz/nvim-dotfiles.git
 
