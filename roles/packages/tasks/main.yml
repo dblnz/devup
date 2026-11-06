@@ -10,6 +10,36 @@
   become: true
   when: ansible_facts['os_family'] == 'Archlinux'
 
+- name: Import signing keys for third-party repositories
+  ansible.builtin.rpm_key:
+    key: "{{ item.gpgkey }}"
+    state: present
+  become: true
+  loop: "{{ packages_dnf_repos }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: ansible_facts['os_family'] == 'RedHat'
+
+- name: Add third-party repositories
+  ansible.builtin.yum_repository:
+    name: "{{ item.name }}"
+    description: "{{ item.description }}"
+    baseurl: "{{ item.baseurl }}"
+    gpgkey: "{{ item.gpgkey }}"
+    gpgcheck: true
+  become: true
+  loop: "{{ packages_dnf_repos }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: ansible_facts['os_family'] == 'RedHat'
+
+- name: Install packages (dnf)
+  ansible.builtin.dnf:
+    name: "{{ system_packages }}"
+    state: present
+  become: true
+  when: ansible_facts['os_family'] == 'RedHat'
+
 - name: Install packages (Homebrew)
   community.general.homebrew:
     name: "{{ system_packages }}"

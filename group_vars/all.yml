@@ -9,3 +9,9 @@ macspoof_interface: wlan0
 
 # Neovim config repository
 nvim_config_repo: https://github.com/dblnz/nvim-dotfiles.git
+
+# Nerd Font (icons in nvim/starship)
+nerd_font_name: JetBrainsMono
+nerd_font_version: v3.4.0
+nerd_font_cask: font-jetbrains-mono-nerd-font
+fonts_dir: "{{ user_home }}/.local/share/fonts/{{ nerd_font_name }}"

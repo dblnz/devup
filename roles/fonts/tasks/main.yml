@@ -1,0 +1,34 @@
+---
+# Nerd Font so nvim/starship icons render. The terminal emulator must still be
+# configured to use it.
+- name: Install Nerd Font (Linux)
+  when: ansible_facts['system'] == 'Linux'
+  block:
+    - name: Create user font directory
+      ansible.builtin.file:
+        path: "{{ fonts_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Download and unpack Nerd Font
+      ansible.builtin.unarchive:
+        src: "https://github.com/ryanoasis/nerd-fonts/releases/download/{{ nerd_font_version }}/{{ nerd_font_name }}.tar.xz"
+        dest: "{{ fonts_dir }}"
+        remote_src: true
+        creates: "{{ fonts_dir }}/.{{ nerd_font_name }}-{{ nerd_font_version }}"
+        exclude: ["LICENSE*", "README*"]
+      notify: Refresh font cache
+
+    - name: Record installed font version
+      ansible.builtin.file:
+        path: "{{ fonts_dir }}/.{{ nerd_font_name }}-{{ nerd_font_version }}"
+        state: touch
+        mode: "0644"
+        modification_time: preserve
+        access_time: preserve
+
+- name: Install Nerd Font (Homebrew)
+  community.general.homebrew_cask:
+    name: "{{ nerd_font_cask }}"
+    state: present
+  when: ansible_facts['os_family'] == 'Darwin'

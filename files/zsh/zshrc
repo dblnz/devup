@@ -20,10 +20,13 @@ alias ...='cd ../..'
 alias vi=nvim vim=nvim vimdiff='nvim -d'
 alias g=git gs='git status' gd='git diff' ga='git add' gc='git commit' gp='git push' gl='git pull'
 
-# Plugins from the distro (Arch: /usr/share/zsh/plugins, Homebrew: share)
+# Plugins from the distro (Arch: /usr/share/zsh/plugins, Fedora: /usr/share,
+# Homebrew: share), or cloned by the shell role when the distro lacks them
 _zsh_plugin() {
   local name=$1 p
   for p in "/usr/share/zsh/plugins/$name/$name.zsh" \
+           "/usr/share/$name/$name.zsh" \
+           "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/$name/$name.zsh" \
            "${HOMEBREW_PREFIX:-/opt/homebrew}/share/$name/$name.zsh" \
            "/usr/local/share/$name/$name.zsh"; do
     [[ -r $p ]] && { source "$p"; return; }

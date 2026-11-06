@@ -1,6 +1,6 @@
 ---
 - name: Install macchanger
-  community.general.pacman:
+  ansible.builtin.package:
     name: macchanger
     state: present
   become: true

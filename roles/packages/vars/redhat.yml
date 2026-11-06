@@ -1,0 +1,73 @@
+---
+# Fedora only: site.yml rejects the rest of the RedHat family.
+
+# Not in the Fedora repos. These are the sources each project documents.
+packages_dnf_repos:
+  - name: mise
+    description: mise
+    baseurl: https://mise.jdx.dev/rpm
+    gpgkey: https://mise.jdx.dev/gpg-key.pub
+  - name: copr-atim-starship
+    description: Copr repo for starship owned by atim
+    baseurl: https://download.copr.fedorainfracloud.org/results/atim/starship/fedora-$releasever-$basearch/
+    gpgkey: https://download.copr.fedorainfracloud.org/results/atim/starship/pubkey.gpg
+  - name: copr-atim-bottom
+    description: Copr repo for bottom owned by atim
+    baseurl: https://download.copr.fedorainfracloud.org/results/atim/bottom/fedora-$releasever-$basearch/
+    gpgkey: https://download.copr.fedorainfracloud.org/results/atim/bottom/pubkey.gpg
+
+system_packages:
+  # Equivalent of Arch's base-devel
+  - autoconf
+  - automake
+  - binutils
+  - bison
+  - file
+  - flex
+  - gcc
+  - gcc-c++
+  - gettext
+  - libtool
+  - make
+  - patch
+  - pkgconf-pkg-config
+  - which
+  - cmake
+  - git
+  - git-delta
+  - git-lfs
+  - gh
+  - just
+  - bat
+  - eza
+  - fd-find
+  - ripgrep
+  - fzf
+  - tree
+  - htop
+  - btop
+  - bottom
+  - rsync
+  - wget
+  - curl
+  - tar
+  - gzip
+  - bzip2
+  - xz
+  - zip
+  - unzip
+  - bind-utils
+  - nmap
+  - jq
+  - yq
+  - duf
+  - du-dust
+  - lua
+  - zsh
+  - zsh-autosuggestions
+  - zsh-syntax-highlighting
+  - tmux
+  - starship
+  - zoxide
+  - direnv
+  - mise

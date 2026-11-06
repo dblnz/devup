@@ -10,12 +10,11 @@ experimental = true
 package_manager = "npm"
 
 [tools]
-node = "24"
+node = "lts"
 go = "latest"
 python = "3.13"
 rust = "1.91.1"
 neovim = "0.12.2"
 lazygit = "latest"
-"npm:@anthropic-ai/claude-code" = "latest"
 "npm:@openai/codex" = "0.79.0"
 "npm:@github/copilot" = "1.0.61"

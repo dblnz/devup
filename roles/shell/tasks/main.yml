@@ -9,7 +9,7 @@
     path: /etc/shells
     line: "{{ zsh_path.stdout }}"
   become: true
-  when: ansible_facts['os_family'] == 'Archlinux'
+  when: ansible_facts['system'] == 'Linux'
 
 - name: Set zsh as login shell
   ansible.builtin.user:
@@ -17,9 +17,17 @@
     shell: "{{ zsh_path.stdout }}"
   become: true
   when:
-    - ansible_facts['os_family'] == 'Archlinux'
+    - ansible_facts['system'] == 'Linux'
     - ansible_facts['env']['SHELL'] | default('') != zsh_path.stdout
     - not (ci_container | default(false) | bool)
+
+# Not packaged for Fedora, and zshrc binds the up arrow to it.
+- name: Clone zsh-history-substring-search
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-history-substring-search.git
+    dest: "{{ user_home }}/.local/share/zsh/plugins/zsh-history-substring-search"
+    version: v1.1.0
+  when: ansible_facts['os_family'] == 'RedHat'
 
 - name: Create zsh history directory
   ansible.builtin.file:

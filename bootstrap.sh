@@ -6,10 +6,13 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 
 case "$OSTYPE" in
   linux-gnu*)
-    if ! command -v pacman >/dev/null; then
-      echo "Unsupported Linux distribution (Arch only)." >&2; exit 1
+    if command -v pacman >/dev/null; then
+      sudo pacman -S --needed --noconfirm ansible git
+    elif [[ -r /etc/fedora-release ]]; then
+      sudo dnf install -y ansible-core git python3-libdnf5 python3-libselinux
+    else
+      echo "Unsupported Linux distribution (Arch and Fedora only)." >&2; exit 1
     fi
-    sudo pacman -S --needed --noconfirm ansible git
     ;;
   darwin*)
     if ! command -v brew >/dev/null; then

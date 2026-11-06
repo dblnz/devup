@@ -28,6 +28,15 @@ jobs:
       - name: Run playbook twice in an Arch container
         run: tests/run-arch.sh
 
+  fedora:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run playbook twice in a Fedora container
+        run: tests/run-fedora.sh
+
   macos-syntax:
     runs-on: macos-latest
     permissions:

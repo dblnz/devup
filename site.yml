@@ -7,13 +7,15 @@
   pre_tasks:
     - name: Fail on unsupported platforms
       ansible.builtin.assert:
-        that: ansible_facts['os_family'] in ['Archlinux', 'Darwin']
-        fail_msg: "Only Arch Linux and macOS are supported."
+        that: ansible_facts['os_family'] in ['Archlinux', 'Darwin'] or ansible_facts['distribution'] == 'Fedora'
+        fail_msg: "Only Arch Linux, Fedora and macOS are supported."
   roles:
     - role: packages
       tags: [packages]
     - role: shell
       tags: [shell]
+    - role: fonts
+      tags: [fonts]
     - role: dotfiles
       tags: [dotfiles]
     - role: git
@@ -24,4 +26,4 @@
       tags: [neovim]
     - role: macspoof
       tags: [macspoof]
-      when: macspoof_enabled | bool and ansible_facts['os_family'] == 'Archlinux'
+      when: macspoof_enabled | bool and ansible_facts['system'] == 'Linux'
