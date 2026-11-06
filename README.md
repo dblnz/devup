@@ -20,6 +20,18 @@ Run only some roles with tags:
 ansible-playbook site.yml --tags dotfiles,git
 ```
 
+## After running the playbook
+
+Some steps are manual:
+
+1. **tmux plugins**: the playbook only clones TPM. Start `tmux` and press `prefix + I` (capital I) to
+   install the plugins, or run `~/.tmux/plugins/tpm/bin/install_plugins`. Then reload with
+   `tmux source ~/.tmux.conf`.
+2. **Terminal font**: set your terminal's font to JetBrainsMono Nerd Font.
+3. **Git signing**: copy `files/git/signing.local.example` to `~/.config/git/signing.local` and edit it.
+4. **New shell**: open a new shell (or log out and in after the login shell changed to zsh), then check
+   `mise ls`.
+
 ## Layout
 
 | Path | Purpose |

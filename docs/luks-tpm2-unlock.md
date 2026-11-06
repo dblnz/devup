@@ -36,6 +36,20 @@ sudo systemd-cryptenroll /dev/XXX --wipe-slot=<password_slot>
 
 Make sure the recovery key works before wiping the password.
 
+### Adding a passphrase back later
+
+A LUKS2 container holds several keyslots, so a typeable passphrase can be added next to the TPM2
+and recovery slots at any time (for example before a Secure Boot or firmware change):
+
+```sh
+sudo systemd-cryptenroll /dev/XXX --password     # asks for an existing passphrase/recovery key, then the new one
+# or, equivalently:
+sudo cryptsetup luksAddKey /dev/XXX
+```
+
+Check the result with `sudo systemd-cryptenroll /dev/XXX`. Later `--wipe-slot=tpm2` leaves the
+password slot alone.
+
 ## 4. Back up the header
 
 ```sh
@@ -95,8 +109,31 @@ The unit above is a cleaned-up sketch, not the gist's exact text, which the gist
 calls messy. Test it by replugging the drive or rebooting, and check
 `systemctl status luks-unlock@<UUID>`.
 
+## Re-enroll the TPM after a firmware update
+
+A firmware or Secure Boot change alters the PCR values the TPM key was sealed to, so the unlock
+fails and boot asks for the recovery key. Unlock with it, then replace the stale TPM2 slot:
+
+```sh
+sudo systemd-cryptenroll /dev/XXX                                   # list slots, confirm the tpm2 one
+sudo systemd-cryptenroll /dev/XXX --wipe-slot=tpm2                  # asks for recovery key/passphrase
+sudo systemd-cryptenroll /dev/XXX --tpm2-device=auto --tpm2-pcrs=7  # match the PCRs used in step 2
+```
+
+The initramfs does not need rebuilding, because only the LUKS header changes. Rebuild it
+(`sudo dracut -f`, or `mkinitcpio -P` on Arch) only if the volume is unlocked in the initramfs,
+as in step 5.
+
+Then reboot and confirm it unlocks without a prompt. Notes:
+
+- `--wipe-slot=tpm2` removes only TPM2 slots. The recovery key and passphrase slots stay.
+- If you enrolled with a PIN, add `--tpm2-with-pin=yes` again.
+- PCR 7 only helps if Secure Boot is on (`mokutil --sb-state`).
+- The crypttab entry for the volume needs `tpm2-device=auto` in its options, or the TPM is not
+  tried.
+
 ## Troubleshooting
 
-- Asks for a passphrase at boot: the TPM policy no longer matches, so use the recovery key. Then
-  re-enroll with `sudo systemd-cryptenroll /dev/XXX --wipe-slot=tpm2 --tpm2-device=auto --tpm2-pcrs=7`.
+- Asks for a passphrase at boot: the TPM policy no longer matches. Use the recovery key, then
+  follow "Re-enroll the TPM after a firmware update" above.
 - Check what is enrolled: `sudo cryptsetup luksDump /dev/XXX`.
