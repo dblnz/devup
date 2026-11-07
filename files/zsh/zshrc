@@ -56,3 +56,5 @@ command -v starship >/dev/null && eval "$(starship init zsh)"
 
 # Syntax highlighting must be sourced last
 _zsh_plugin zsh-syntax-highlighting
+
+export PATH=$PATH:/usr/bin

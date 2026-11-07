@@ -1,0 +1,4 @@
+---
+framework_charge_limit_percent: 60
+framework_tool_path: /usr/bin/framework_tool
+terra_release_url: "https://repos.fyralabs.com/terra{{ ansible_facts['distribution_major_version'] }}"

@@ -1,0 +1,12 @@
+[Unit]
+Description=Framework Charge Limit Service
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart={{ framework_tool_path }} --charge-limit {{ framework_charge_limit_percent }}
+ExecStop={{ framework_tool_path }} --charge-limit 100
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target

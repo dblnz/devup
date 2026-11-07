@@ -10,6 +10,10 @@ macspoof_interface: wlan0
 # Optional automatic btrfs snapshots via snapper (Linux, btrfs root only)
 snapper_enabled: false
 
+# Optional Framework laptop battery charge limit via framework_tool + systemd (Linux)
+framework_charge_limit_enabled: false
+framework_charge_limit_percent: 60
+
 # Neovim config repository
 nvim_config_repo: https://github.com/dblnz/nvim-dotfiles.git
 

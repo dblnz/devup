@@ -30,3 +30,6 @@
     - role: snapper
       tags: [snapper]
       when: snapper_enabled | bool and ansible_facts['system'] == 'Linux'
+    - role: framework_charge_limit
+      tags: [framework_charge_limit]
+      when: framework_charge_limit_enabled | bool and ansible_facts['system'] == 'Linux'

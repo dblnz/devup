@@ -46,6 +46,7 @@ Some steps are manual:
 | `roles/neovim` | Clones the nvim config into `~/.config/nvim` (never overwrites local edits) |
 | `roles/macspoof` | Opt-in MAC address spoofing systemd unit (Linux) |
 | `roles/snapper` | Opt-in automatic btrfs snapshots with snapper (hourly timeline + cleanup; Fedora/Arch) |
+| `roles/framework_charge_limit` | Opt-in Framework laptop battery charge limit (`framework-system` from the Terra repo + systemd unit) |
 | `templates/<lang>/mise.toml` | Starter per-project tool pins |
 
 Per-machine overrides go in `host_vars/localhost.yml` (git-ignored):
@@ -56,7 +57,16 @@ git_user_email: you@example.com
 macspoof_enabled: true
 macspoof_interface: wlan0
 snapper_enabled: true   # btrfs root only; override snapper_settings for retention
+framework_charge_limit_enabled: true
+framework_charge_limit_percent: 60
 ```
+
+## Framework battery charge limit
+
+`roles/framework_charge_limit` sets the limit with `framework_tool` and a systemd unit. On GNOME, the
+[Battery Health Charging](https://extensions.gnome.org/extension/5724/battery-health-charging/) extension is an
+alternative that sets the threshold from the shell. Note that a Framework firmware update can break it, which is why
+this repo uses the systemd unit.
 
 ## Fedora third-party sources
 
