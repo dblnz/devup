@@ -18,7 +18,7 @@ engine=$(command -v docker || command -v podman)
     ansible-playbook site.yml -e ci_container=true
     ansible-playbook site.yml -e ci_container=true | tee /tmp/second.log
     grep -Eq \"changed=0 .*failed=0\" /tmp/second.log
-    # zshrc finds its plugins at Fedora paths
-    zsh -ic \"typeset -f history-substring-search-up _zsh_autosuggest_start _zsh_highlight\" >/dev/null
+    # zshrc loads oh-my-zsh and finds its plugins at Fedora paths
+    zsh -ic \"typeset -f omz history-substring-search-up _zsh_autosuggest_start _zsh_highlight\" >/dev/null
   "
 '

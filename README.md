@@ -38,7 +38,7 @@ Some steps are manual:
 |------|---------|
 | `site.yml` | Entry point: runs the roles below |
 | `roles/packages` | pacman / dnf / Homebrew packages (lists in `roles/packages/vars/<os_family>.yml`) |
-| `roles/shell` | Sets zsh as the login shell |
+| `roles/shell` | Sets zsh as the login shell and clones oh-my-zsh (pinned commit) |
 | `roles/fonts` | Installs the JetBrainsMono Nerd Font (set it in your terminal) |
 | `roles/dotfiles` | Symlinks `files/<tool>/*` into `$HOME` |
 | `roles/git` | Renders `~/.config/git/config` from `git_user_name` / `git_user_email` |
@@ -76,7 +76,6 @@ A few tools are not in the Fedora repos, so the playbook adds these sources:
 |------|--------|
 | `mise` | Upstream RPM repo (`mise.jdx.dev/rpm`) |
 | `starship`, `bottom` | COPR repos `atim/starship` and `atim/bottom` |
-| `zsh-history-substring-search` | Git clone into `~/.local/share/zsh/plugins` |
 
 ## Git signing
 

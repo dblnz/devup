@@ -34,7 +34,6 @@ system_packages:
   - zsh
   - zsh-autosuggestions
   - zsh-syntax-highlighting
-  - zsh-history-substring-search
   - tmux
   - starship
   - zoxide

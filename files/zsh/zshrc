@@ -1,13 +1,31 @@
-# History
+# History (set before oh-my-zsh, which only fills in values left unset)
 HISTFILE="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/history"
 HISTSIZE=10000
 SAVEHIST=10000
 setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE
 
-autoload -Uz compinit && compinit
-autoload -U colors && colors
+# oh-my-zsh (cloned and pinned by the shell role). It also runs compinit,
+# loads colors and sets up emacs keybindings (Ctrl+arrows, Home/End, ...).
+export ZSH="$HOME/.local/share/oh-my-zsh"   # same path the shell role clones to
+ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
+ZSH_THEME=""                         # starship draws the prompt
+zstyle ':omz:update' mode disabled   # version is pinned by ansible
+plugins=(
+  git
+  sudo
+  docker
+  kubectl
+  rust
+  golang
+  python
+  tmux
+  colored-man-pages
+  command-not-found
+  history-substring-search
+)
+[[ -r $ZSH/oh-my-zsh.sh ]] && source "$ZSH/oh-my-zsh.sh"
 
-# Aliases
+# Aliases (after oh-my-zsh so these win over its defaults)
 alias cat=bat
 alias grep='grep --color'
 alias egrep='egrep --color'
@@ -21,19 +39,17 @@ alias vi=nvim vim=nvim vimdiff='nvim -d'
 alias g=git gs='git status' gd='git diff' ga='git add' gc='git commit' gp='git push' gl='git pull'
 
 # Plugins from the distro (Arch: /usr/share/zsh/plugins, Fedora: /usr/share,
-# Homebrew: share), or cloned by the shell role when the distro lacks them
+# Homebrew: share)
 _zsh_plugin() {
   local name=$1 p
   for p in "/usr/share/zsh/plugins/$name/$name.zsh" \
            "/usr/share/$name/$name.zsh" \
-           "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/$name/$name.zsh" \
            "${HOMEBREW_PREFIX:-/opt/homebrew}/share/$name/$name.zsh" \
            "/usr/local/share/$name/$name.zsh"; do
     [[ -r $p ]] && { source "$p"; return; }
   done
 }
 _zsh_plugin zsh-autosuggestions
-_zsh_plugin zsh-history-substring-search
 bindkey '^ ' autosuggest-accept
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
