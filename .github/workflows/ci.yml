@@ -37,6 +37,20 @@ jobs:
       - name: Run playbook twice in a Fedora container
         run: tests/run-fedora.sh
 
+  ubuntu:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ubuntu: ["24.04", "26.04"]
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run playbook twice in an Ubuntu container
+        run: tests/run-ubuntu.sh
+        env:
+          UBUNTU_VERSION: ${{ matrix.ubuntu }}
+
   macos-syntax:
     runs-on: macos-latest
     permissions:

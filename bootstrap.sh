@@ -10,8 +10,15 @@ case "$OSTYPE" in
       sudo pacman -S --needed --noconfirm ansible git
     elif [[ -r /etc/fedora-release ]]; then
       sudo dnf install -y ansible-core git python3-libdnf5 python3-libselinux
+    elif [[ -r /etc/os-release ]] && (. /etc/os-release; [[ "${ID:-}" == ubuntu ]]); then
+      . /etc/os-release
+      if ! dpkg --compare-versions "${VERSION_ID:-0}" ge 24.04; then
+        echo "Ubuntu 24.04 or newer is required." >&2; exit 1
+      fi
+      sudo apt-get update
+      sudo apt-get install -y ansible-core git python3-apt ca-certificates
     else
-      echo "Unsupported Linux distribution (Arch and Fedora only)." >&2; exit 1
+      echo "Unsupported Linux distribution (Arch, Fedora and Ubuntu 24.04+ only)." >&2; exit 1
     fi
     ;;
   darwin*)

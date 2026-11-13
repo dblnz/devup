@@ -1,0 +1,171 @@
+---
+- name: Check upstream binary architecture
+  ansible.builtin.assert:
+    that: ansible_facts['architecture'] in ['x86_64', 'aarch64']
+    fail_msg: "Ubuntu upstream tool releases support x86_64 and aarch64 only."
+
+- name: Configure mise apt repository
+  become: true
+  block:
+    - name: Install apt repository prerequisites
+      ansible.builtin.apt:
+        name: [ca-certificates, python3-debian]
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Create apt keyring directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Download mise repository signing key
+      ansible.builtin.get_url:
+        url: https://mise.jdx.dev/gpg-key.pub
+        dest: /etc/apt/keyrings/mise.asc
+        mode: "0644"
+
+    - name: Add mise apt repository
+      ansible.builtin.deb822_repository:
+        name: mise
+        types: [deb]
+        uris: https://mise.jdx.dev/deb
+        suites: [stable]
+        components: [main]
+        signed_by: /etc/apt/keyrings/mise.asc
+        state: present
+      register: packages_mise_repository
+
+- name: Install packages (apt)
+  ansible.builtin.apt:
+    name: "{{ system_packages }}"
+    state: present
+    update_cache: true
+    cache_valid_time: "{{ 0 if packages_mise_repository.changed else 3600 }}"
+  become: true
+
+- name: Check optional native packages
+  ansible.builtin.command:
+    argv: [apt-cache, madison, "{{ item }}"]
+  loop: [bottom, du-dust, starship]
+  register: packages_ubuntu_available
+  changed_when: false
+  check_mode: false
+
+- name: Select native packages and upstream fallbacks
+  ansible.builtin.set_fact:
+    packages_ubuntu_native: "{{ packages_ubuntu_available.results | selectattr('stdout') | map(attribute='item') | list }}"
+    packages_ubuntu_fallbacks: >-
+      {{ packages_ubuntu_releases | rejectattr('name', 'in',
+         packages_ubuntu_available.results | selectattr('stdout') | map(attribute='item') | list) | list }}
+
+- name: Install available native tools
+  ansible.builtin.apt:
+    name: "{{ packages_ubuntu_native }}"
+    state: present
+  become: true
+
+- name: Inspect previous upstream utility links
+  ansible.builtin.stat:
+    path: "/usr/local/bin/{{ item.binary }}"
+    follow: false
+  loop: "{{ packages_ubuntu_releases | selectattr('name', 'in', packages_ubuntu_native) | selectattr('binary', 'defined') | list }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: packages_ubuntu_links
+
+- name: Remove managed upstream links replaced by native packages
+  ansible.builtin.file:
+    path: "{{ item.stat.path }}"
+    state: absent
+  become: true
+  loop: "{{ packages_ubuntu_links.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+  when:
+    - item.stat.islnk | default(false)
+    - item.stat.lnk_source is match('^/opt/devup/' + item.item.name + '-[^/]+/' + item.item.binary + '$')
+
+- name: Install verified upstream tools
+  become: true
+  block:
+    - name: Create upstream download cache and binary directory
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop: [/var/cache/devup, /opt/devup, /usr/local/bin]
+
+    - name: Download pinned upstream releases
+      ansible.builtin.get_url:
+        url: "{{ item.url }}"
+        dest: "/var/cache/devup/{{ item.name }}-{{ item.version }}.{{ item.format }}"
+        checksum: "sha256:{{ item.sha256[ansible_facts['architecture']] }}"
+        mode: "0644"
+      loop: "{{ packages_ubuntu_fallbacks }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Install upstream Debian packages
+      ansible.builtin.apt:
+        deb: "/var/cache/devup/{{ item.name }}-{{ item.version }}.deb"
+      loop: "{{ packages_ubuntu_fallbacks | selectattr('format', 'equalto', 'deb') | list }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Create upstream installation directories
+      ansible.builtin.file:
+        path: "/opt/devup/{{ item.name }}-{{ item.version }}"
+        state: directory
+        mode: "0755"
+      loop: "{{ packages_ubuntu_fallbacks | rejectattr('format', 'equalto', 'deb') | list }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Extract upstream archives
+      ansible.builtin.unarchive:
+        src: "/var/cache/devup/{{ item.name }}-{{ item.version }}.tar.gz"
+        dest: "/opt/devup/{{ item.name }}-{{ item.version }}"
+        remote_src: true
+        extra_opts: "{{ item.extra_opts }}"
+        creates: "/opt/devup/{{ item.name }}-{{ item.version }}/{{ item.binary }}"
+      loop: "{{ packages_ubuntu_fallbacks | selectattr('format', 'equalto', 'tar.gz') | list }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Install upstream binaries
+      ansible.builtin.copy:
+        src: "/var/cache/devup/{{ item.name }}-{{ item.version }}.binary"
+        dest: "/opt/devup/{{ item.name }}-{{ item.version }}/{{ item.binary }}"
+        remote_src: true
+        owner: root
+        group: root
+        mode: "0755"
+      loop: "{{ packages_ubuntu_fallbacks | selectattr('format', 'equalto', 'binary') | list }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Expose upstream binaries
+      ansible.builtin.file:
+        src: "/opt/devup/{{ item.name }}-{{ item.version }}/{{ item.binary }}"
+        dest: "/usr/local/bin/{{ item.binary }}"
+        state: link
+      loop: "{{ packages_ubuntu_fallbacks | rejectattr('format', 'equalto', 'deb') | list }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+- name: Create user binary directory (Ubuntu)
+  ansible.builtin.file:
+    path: "{{ user_home }}/.local/bin"
+    state: directory
+    mode: "0755"
+
+- name: Expose standard tool names (Ubuntu)
+  ansible.builtin.file:
+    src: "/usr/bin/{{ item.src }}"
+    dest: "{{ user_home }}/.local/bin/{{ item.dest }}"
+    state: link
+  loop:
+    - { src: batcat, dest: bat }
+    - { src: fdfind, dest: fd }

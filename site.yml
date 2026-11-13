@@ -7,8 +7,13 @@
   pre_tasks:
     - name: Fail on unsupported platforms
       ansible.builtin.assert:
-        that: ansible_facts['os_family'] in ['Archlinux', 'Darwin'] or ansible_facts['distribution'] == 'Fedora'
-        fail_msg: "Only Arch Linux, Fedora and macOS are supported."
+        that: >-
+          ansible_facts['os_family'] in ['Archlinux', 'Darwin']
+          or ansible_facts['distribution'] == 'Fedora'
+          or (ansible_facts['distribution'] == 'Ubuntu'
+              and ansible_facts['distribution_version'] is version('24.04', '>='))
+        fail_msg: "Only Arch Linux, Fedora, Ubuntu 24.04+ and macOS are supported."
+      tags: [always]
   roles:
     - role: packages
       tags: [packages]

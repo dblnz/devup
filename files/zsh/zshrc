@@ -57,7 +57,14 @@ bindkey '^P' history-substring-search-up
 bindkey '^N' history-substring-search-down
 
 # fzf
-if command -v fzf >/dev/null; then source <(fzf --zsh); fi
+if command -v fzf >/dev/null; then
+  if [[ -r /usr/share/doc/fzf/examples/key-bindings.zsh && -r /usr/share/doc/fzf/examples/completion.zsh ]]; then
+    source /usr/share/doc/fzf/examples/key-bindings.zsh
+    source /usr/share/doc/fzf/examples/completion.zsh
+  else
+    source <(fzf --zsh)
+  fi
+fi
 
 # Edit command line in editor
 autoload -z edit-command-line

@@ -1,0 +1,97 @@
+---
+# Ubuntu 24.04+ only: site.yml rejects the rest of the Debian family.
+system_packages:
+  - build-essential
+  - autoconf
+  - automake
+  - bison
+  - flex
+  - gettext
+  - libtool
+  - patch
+  - pkg-config
+  - cmake
+  - libssl-dev
+  - zlib1g-dev
+  - libbz2-dev
+  - libreadline-dev
+  - libsqlite3-dev
+  - libffi-dev
+  - liblzma-dev
+  - libncurses-dev
+  - tk-dev
+  - uuid-dev
+  - git
+  - git-delta
+  - git-lfs
+  - gh
+  - just
+  - bat
+  - eza
+  - fd-find
+  - ripgrep
+  - fzf
+  - tree
+  - htop
+  - btop
+  - rsync
+  - wget
+  - curl
+  - tar
+  - gzip
+  - bzip2
+  - xz-utils
+  - zip
+  - unzip
+  - dnsutils
+  - nmap
+  - jq
+  - duf
+  - lua5.4
+  - zsh
+  - zsh-autosuggestions
+  - zsh-syntax-highlighting
+  - tmux
+  - zoxide
+  - direnv
+  - fontconfig
+  - mise
+
+packages_ubuntu_deb_arch: "{{ {'x86_64': 'amd64', 'aarch64': 'arm64'}[ansible_facts['architecture']] }}"
+
+# SHA256 digests from the pinned upstream GitHub release assets.
+# Prefer native packages when available; Ubuntu's yq is a different implementation.
+packages_ubuntu_releases:
+  - name: bottom
+    version: "0.15.0"
+    format: deb
+    url: "https://github.com/ClementTsang/bottom/releases/download/0.15.0/bottom_0.15.0-1_{{ packages_ubuntu_deb_arch }}.deb"
+    sha256:
+      x86_64: 02aabca9cd9dd41d3fbf3642e96b5a7b266027fd0ba9eb78a96e4c5eeabcd8c8
+      aarch64: 1b70cef7d66fedc6df227f85d34a4238d99f3e3800cfb3fd14bafb072b6dece9
+  - name: du-dust
+    version: "1.2.7"
+    format: tar.gz
+    binary: dust
+    extra_opts: [--strip-components=1]
+    url: "https://github.com/bootandy/dust/releases/download/v1.2.7/dust-v1.2.7-{{ ansible_facts['architecture'] }}-unknown-linux-musl.tar.gz"
+    sha256:
+      x86_64: 2f1a1106f1f14c0b684b2f0a5f4482c6d53e07a871df4afc11e3b91ade300b55
+      aarch64: 4c8ebaf224179bfd42db45d8a50fd5304bbd89532eda94db684d309c7b734ed6
+  - name: starship
+    version: "1.27.0"
+    format: tar.gz
+    binary: starship
+    extra_opts: []
+    url: "https://github.com/starship/starship/releases/download/v1.27.0/starship-{{ ansible_facts['architecture'] }}-unknown-linux-musl.tar.gz"
+    sha256:
+      x86_64: 10c8eb4cb3b761d9bf59ea828444c2dab36c900b7d69a69e08814b286969df89
+      aarch64: 341f5cbf24699fa0b27ec88965ad25f862ea09e15d35a543fd6ffdff1d2aa00d
+  - name: yq
+    version: "4.54.3"
+    format: binary
+    binary: yq
+    url: "https://github.com/mikefarah/yq/releases/download/v4.54.3/yq_linux_{{ packages_ubuntu_deb_arch }}"
+    sha256:
+      x86_64: 129534601871538efe0ba4c5e62a34fb1d5f469bcb975c4fddeb467d82974973
+      aarch64: 89f69310b61b68d1245065a1241d1fc843f7a36cd6103ffd77ad987613bd1b67

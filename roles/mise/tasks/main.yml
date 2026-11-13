@@ -1,14 +1,26 @@
 ---
-- name: Find tools declared in the global mise config that are not installed
-  ansible.builtin.command: mise ls --missing --no-header
-  register: mise_missing
-  changed_when: false
-  environment:
-    PATH: "{{ user_home }}/.local/bin:{{ ansible_facts['env']['PATH'] }}"
+- name: Remove obsolete mise utility configuration (Ubuntu)
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/mise/conf.d/ubuntu.toml"
+    state: absent
+  when: ansible_facts['distribution'] == 'Ubuntu'
 
-- name: Install missing global tools
-  ansible.builtin.command: mise install --yes
-  changed_when: true
-  when: mise_missing.stdout | trim | length > 0
+- name: Install global mise tools
+  vars:
+    mise_executable: "{{ '/usr/bin/mise' if ansible_facts['system'] == 'Linux' else 'mise' }}"
   environment:
     PATH: "{{ user_home }}/.local/bin:{{ ansible_facts['env']['PATH'] }}"
+  block:
+    - name: Find tools declared in the global mise config that are not installed
+      ansible.builtin.command:
+        argv: ["{{ mise_executable }}", ls, --missing, --no-header]
+        chdir: "{{ user_home }}"
+      register: mise_missing
+      changed_when: false
+
+    - name: Install missing global tools
+      ansible.builtin.command:
+        argv: ["{{ mise_executable }}", install, --yes]
+        chdir: "{{ user_home }}"
+      changed_when: true
+      when: mise_missing.stdout | trim | length > 0

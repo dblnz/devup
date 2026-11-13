@@ -1,6 +1,6 @@
 # devup
 
-Personal development setup as an Ansible playbook. Supports Arch Linux, Fedora and macOS (Homebrew).
+Personal development setup as an Ansible playbook. Supports Arch Linux, Fedora, Ubuntu 24.04+ and macOS (Homebrew).
 It runs locally against the current user. Nothing is hardcoded to a username.
 
 ## Quick start
@@ -11,7 +11,7 @@ cd ~/devup
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs Ansible (pacman, dnf or brew), installs the pinned collections and runs
+`bootstrap.sh` installs Ansible (pacman, dnf, apt or brew), installs the pinned collections and runs
 `ansible-playbook site.yml --ask-become-pass`. Re-running it is the normal update flow.
 
 Run only some roles with tags:
@@ -37,7 +37,7 @@ Some steps are manual:
 | Path | Purpose |
 |------|---------|
 | `site.yml` | Entry point: runs the roles below |
-| `roles/packages` | pacman / dnf / Homebrew packages (lists in `roles/packages/vars/<os_family>.yml`) |
+| `roles/packages` | pacman / dnf / apt / Homebrew packages (lists in `roles/packages/vars/<os_family>.yml`) |
 | `roles/shell` | Sets zsh as the login shell and clones oh-my-zsh (pinned commit) |
 | `roles/fonts` | Installs the JetBrainsMono Nerd Font (set it in your terminal) |
 | `roles/dotfiles` | Symlinks `files/<tool>/*` into `$HOME` |
@@ -45,7 +45,7 @@ Some steps are manual:
 | `roles/mise` | Installs global tools from `files/mise/config.toml` |
 | `roles/neovim` | Clones the nvim config into `~/.config/nvim` (never overwrites local edits) |
 | `roles/macspoof` | Opt-in MAC address spoofing systemd unit (Linux) |
-| `roles/snapper` | Opt-in automatic btrfs snapshots with snapper (hourly timeline + cleanup; Fedora/Arch) |
+| `roles/snapper` | Opt-in automatic btrfs snapshots with snapper (hourly timeline + cleanup; Linux) |
 | `roles/framework_charge_limit` | Opt-in Framework laptop battery charge limit (`framework-system` from the Terra repo + systemd unit) |
 | `templates/<lang>/mise.toml` | Starter per-project tool pins |
 
@@ -77,6 +77,29 @@ A few tools are not in the Fedora repos, so the playbook adds these sources:
 | `mise` | Upstream RPM repo (`mise.jdx.dev/rpm`) |
 | `starship`, `bottom` | COPR repos `atim/starship` and `atim/bottom` |
 
+## Ubuntu packages
+
+Ubuntu 24.04+ uses apt (with the standard `universe` repository enabled) and the signed upstream
+mise repository (`mise.jdx.dev/deb`). Shell utilities come from apt, including delta, fzf and just.
+The shell loads fzf's packaged integration scripts on older releases.
+
+The packages role also prefers native packages for bottom, dust and starship when available
+(Ubuntu 26.04 includes dust and starship). Otherwise it installs pinned, SHA256-verified upstream
+releases: bottom as a Debian package, dust and starship into `/usr/local/bin`.
+Mike Farah's yq is installed into `/usr/local/bin` from a verified upstream release because
+Ubuntu's `yq` package is a different implementation. Release versions and checksums are recorded
+in `roles/packages/vars/debian.yml`; upstream fallbacks support x86_64 and aarch64.
+These utilities do not depend on mise activation. Previously generated Ubuntu utility
+configuration is removed from mise, but already downloaded mise tools are left untouched.
+
+The shell history plugin is provided by oh-my-zsh.
+User-local `bat` and `fd` symlinks expose Ubuntu's `batcat` and `fdfind` under their usual names.
+Optional snapper support provides timeline snapshots and cleanup, not apt transaction hooks.
+
+The mise role runs from the user's home directory so project tool configurations are not
+installed as global tools. On Linux it uses `/usr/bin/mise`, installed by the packages role,
+even if an older user-local mise appears first on `PATH`.
+
 ## Git signing
 
 SSH signing is configured per machine. Copy `files/git/signing.local.example` to
@@ -99,5 +122,6 @@ OS package manager and are listed in comments inside each template.
 
 ## Tests
 
-`tests/run-arch.sh` and `tests/run-fedora.sh` run the playbook twice in a clean container and fail
-unless the second run changes nothing. CI also runs `ansible-lint` and a macOS syntax check.
+`tests/run-arch.sh`, `tests/run-fedora.sh` and `tests/run-ubuntu.sh` run the playbook twice in a clean
+container and fail unless the second run changes nothing. Ubuntu defaults to 24.04; set
+`UBUNTU_VERSION` to test another release. CI also runs `ansible-lint` and a macOS syntax check.

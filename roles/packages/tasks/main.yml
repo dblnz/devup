@@ -2,6 +2,10 @@
 - name: Load OS-specific package list
   ansible.builtin.include_vars: "{{ ansible_facts['os_family'] | lower }}.yml"
 
+- name: Install Ubuntu packages
+  ansible.builtin.include_tasks: ubuntu.yml
+  when: ansible_facts['distribution'] == 'Ubuntu'
+
 - name: Install packages (pacman)
   community.general.pacman:
     name: "{{ system_packages }}"
