@@ -19,6 +19,9 @@
       tags: [packages]
     - role: shell
       tags: [shell]
+    - role: ssh_agent
+      tags: [ssh_agent]
+      when: ansible_facts['system'] == 'Linux'
     - role: fonts
       tags: [fonts]
     - role: dotfiles

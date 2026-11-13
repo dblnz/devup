@@ -1,3 +1,8 @@
 export EDITOR=nvim
 export VISUAL=nvim
 export PATH="$HOME/.local/bin:$HOME/go/bin:$HOME/.cargo/bin:$PATH"
+
+# Preserve forwarded agents in SSH sessions.
+if [[ $OSTYPE == linux* && -n ${XDG_RUNTIME_DIR:-} && -z ${SSH_CONNECTION:-} ]]; then
+  export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+fi

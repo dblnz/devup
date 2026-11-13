@@ -42,6 +42,15 @@ engine=$(command -v docker || command -v podman)
     if apt-cache madison du-dust | grep -q .; then test ! -L /usr/local/bin/dust; fi
     if apt-cache madison starship | grep -q .; then test ! -L /usr/local/bin/starship; fi
     cd "$HOME"
+    export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+    for shell in zsh bash; do
+      env SSH_CONNECTION= SSH_AUTH_SOCK=/tmp/old-agent "$shell" -ic '"'"'
+        [[ $SSH_AUTH_SOCK == "$XDG_RUNTIME_DIR/ssh-agent.socket" ]]
+      '"'"'
+      env SSH_CONNECTION="forwarded session" SSH_AUTH_SOCK=/tmp/forwarded-agent "$shell" -ic '"'"'
+        [[ $SSH_AUTH_SOCK == /tmp/forwarded-agent ]]
+      '"'"'
+    done
     # The fake mise prevents activation; shell utilities must still work.
     env PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin" zsh -ic '"'"'
       set -e

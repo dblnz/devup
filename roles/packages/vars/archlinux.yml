@@ -3,6 +3,7 @@ system_packages:
   - base-devel
   - cmake
   - git
+  - openssh
   - git-delta
   - git-lfs
   - github-cli

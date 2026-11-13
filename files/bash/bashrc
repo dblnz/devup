@@ -1,5 +1,10 @@
 [[ $- != *i* ]] && return
 
+# Preserve forwarded agents in SSH sessions.
+if [[ $OSTYPE == linux* && -n ${XDG_RUNTIME_DIR:-} && -z ${SSH_CONNECTION:-} ]]; then
+  export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+fi
+
 HISTSIZE=10000
 HISTFILESIZE=20000
 HISTCONTROL=ignoredups:ignorespace

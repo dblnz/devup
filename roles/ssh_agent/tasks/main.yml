@@ -1,0 +1,24 @@
+---
+- name: Create user systemd directory
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/systemd/user"
+    state: directory
+    mode: "0755"
+
+- name: Install ssh-agent user unit
+  ansible.builtin.copy:
+    src: ssh-agent.service
+    dest: "{{ user_home }}/.config/systemd/user/ssh-agent.service"
+    mode: "0644"
+  notify: Restart user ssh-agent
+
+- name: Enable and start user ssh-agent
+  ansible.builtin.systemd:
+    name: ssh-agent.service
+    scope: user
+    enabled: true
+    state: started
+    daemon_reload: true
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ ansible_facts['user_uid'] }}"
+  when: not (ci_container | default(false) | bool)

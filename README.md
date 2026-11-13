@@ -31,6 +31,8 @@ Some steps are manual:
 3. **Git signing**: copy `files/git/signing.local.example` to `~/.config/git/signing.local` and edit it.
 4. **New shell**: open a new shell (or log out and in after the login shell changed to zsh), then check
    `mise ls`.
+5. **SSH keys (Linux)**: run `ssh-add ~/.ssh/id_ed25519` once per login. A systemd user service
+   shares one agent across local zsh and bash terminals; forwarded SSH agents are preserved.
 
 ## Layout
 
@@ -39,6 +41,7 @@ Some steps are manual:
 | `site.yml` | Entry point: runs the roles below |
 | `roles/packages` | pacman / dnf / apt / Homebrew packages (lists in `roles/packages/vars/<os_family>.yml`) |
 | `roles/shell` | Sets zsh as the login shell and clones oh-my-zsh (pinned commit) |
+| `roles/ssh_agent` | Enables one shared SSH agent as a systemd user service (Linux) |
 | `roles/fonts` | Installs the JetBrainsMono Nerd Font (set it in your terminal) |
 | `roles/dotfiles` | Symlinks `files/<tool>/*` into `$HOME` |
 | `roles/git` | Renders `~/.config/git/config` from `git_user_name` / `git_user_email` |
