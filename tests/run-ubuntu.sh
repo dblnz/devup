@@ -31,8 +31,8 @@ engine=$(command -v docker || command -v podman)
         sudo ln -s "/opt/devup/$package-0.0.0/$binary" "/usr/local/bin/$binary"
       fi
     done
-    ansible-playbook site.yml -e ci_container=true
-    ansible-playbook site.yml -e ci_container=true | tee /tmp/second.log
+    ansible-playbook site.yml -e ci_container=true -e ssh_agent_enabled=true
+    ansible-playbook site.yml -e ci_container=true -e ssh_agent_enabled=true | tee /tmp/second.log
     grep -Eq "changed=0 .*failed=0" /tmp/second.log
     test ! -d ~/.local/share/mise/installs/npm
     test ! -e ~/.config/mise/conf.d/ubuntu.toml

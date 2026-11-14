@@ -1,7 +1,9 @@
 [[ $- != *i* ]] && return
 
-# Preserve forwarded agents in SSH sessions.
-if [[ $OSTYPE == linux* && -n ${XDG_RUNTIME_DIR:-} && -z ${SSH_CONNECTION:-} ]]; then
+# Use devup's ssh-agent unit when the ssh_agent role installed it; otherwise keep
+# the desktop's agent (e.g. GNOME's). Preserve forwarded agents in SSH sessions.
+if [[ $OSTYPE == linux* && -n ${XDG_RUNTIME_DIR:-} && -z ${SSH_CONNECTION:-} \
+      && -e $HOME/.config/systemd/user/ssh-agent.service ]]; then
   export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 fi
 

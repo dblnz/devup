@@ -20,7 +20,8 @@
     - role: shell
       tags: [shell]
     - role: ssh_agent
-      tags: [ssh_agent]
+      tags: [ssh_agent, ssh-agent]
+      # Installs the agent when enabled, removes it otherwise (see the role).
       when: ansible_facts['system'] == 'Linux'
     - role: fonts
       tags: [fonts]

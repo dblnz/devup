@@ -31,8 +31,11 @@ Some steps are manual:
 3. **Git signing**: copy `files/git/signing.local.example` to `~/.config/git/signing.local` and edit it.
 4. **New shell**: open a new shell (or log out and in after the login shell changed to zsh), then check
    `mise ls`.
-5. **SSH keys (Linux)**: run `ssh-add ~/.ssh/id_ed25519` once per login. A systemd user service
-   shares one agent across local zsh and bash terminals; forwarded SSH agents are preserved.
+5. **SSH keys (Linux)**: run `ssh-add ~/.ssh/id_ed25519` once per login. With `ssh_agent_enabled: true`
+   (or `--tags ssh-agent`), a systemd user service shares one agent across local zsh and bash
+   terminals; forwarded SSH agents are preserved. Without it, shells keep the desktop's agent
+   (GNOME Keyring's on Fedora/Ubuntu GNOME), and a run with it disabled removes a previously
+   installed unit.
 
 ## Layout
 
@@ -41,7 +44,7 @@ Some steps are manual:
 | `site.yml` | Entry point: runs the roles below |
 | `roles/packages` | pacman / dnf / apt / Homebrew packages (lists in `roles/packages/vars/<os_family>.yml`) |
 | `roles/shell` | Sets zsh as the login shell and clones oh-my-zsh (pinned commit) |
-| `roles/ssh_agent` | Enables one shared SSH agent as a systemd user service (Linux) |
+| `roles/ssh_agent` | Opt-in shared SSH agent as a systemd user service (Linux; `ssh_agent_enabled` or `--tags ssh-agent`) |
 | `roles/fonts` | Installs the JetBrainsMono Nerd Font (set it in your terminal) |
 | `roles/dotfiles` | Symlinks `files/<tool>/*` into `$HOME` |
 | `roles/git` | Renders `~/.config/git/config` from `git_user_name` / `git_user_email` |
@@ -57,6 +60,7 @@ Per-machine overrides go in `host_vars/localhost.yml` (git-ignored):
 ```yaml
 git_user_name: "Your Name"
 git_user_email: you@example.com
+ssh_agent_enabled: true   # not needed when the desktop runs an agent (GNOME Keyring)
 macspoof_enabled: true
 macspoof_interface: wlan0
 snapper_enabled: true   # btrfs root only; override snapper_settings for retention

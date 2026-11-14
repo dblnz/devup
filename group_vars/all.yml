@@ -3,6 +3,11 @@
 git_user_name: "Doru Blânzeanu"
 git_user_email: "dblnz@pm.me"
 
+# Optional shared ssh-agent as a systemd user service (Linux). Leave it off when
+# the desktop already runs an agent (GNOME's gcr-ssh-agent). `--tags ssh-agent`
+# also runs the role.
+ssh_agent_enabled: false
+
 # Optional MAC address spoofing (Linux only)
 macspoof_enabled: false
 macspoof_interface: wlan0
