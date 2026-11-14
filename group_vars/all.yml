@@ -8,6 +8,10 @@ git_user_email: "dblnz@pm.me"
 # also runs the role.
 ssh_agent_enabled: false
 
+# Optional GNOME preferences via dconf (Linux): Ghostty as terminal, Super+N
+# workspaces. Tune in roles/gnome/defaults/main.yml. `--tags gnome` also runs it.
+gnome_enabled: false
+
 # Optional MAC address spoofing (Linux only)
 macspoof_enabled: false
 macspoof_interface: wlan0

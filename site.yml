@@ -23,6 +23,12 @@
       tags: [ssh_agent, ssh-agent]
       # Installs the agent when enabled, removes it otherwise (see the role).
       when: ansible_facts['system'] == 'Linux'
+    - role: gnome
+      tags: [gnome]
+      # Opt-in; asking for its tag (--tags gnome) also enables it for that run.
+      when: >-
+        ansible_facts['system'] == 'Linux'
+        and (gnome_enabled | bool or 'gnome' in ansible_run_tags)
     - role: fonts
       tags: [fonts]
     - role: dotfiles

@@ -1,0 +1,73 @@
+---
+- name: Install dconf module dependencies
+  ansible.builtin.package:
+    name: "{{ gnome_dconf_deps[ansible_facts['os_family']] }}"
+    state: present
+  become: true
+
+# Terminal --------------------------------------------------------------------
+
+- name: Disable the built-in terminal shortcut (it always opens GNOME's terminal)
+  community.general.dconf:
+    key: /org/gnome/settings-daemon/plugins/media-keys/terminal
+    value: "@as []"
+
+# Note: this replaces the whole custom-shortcuts list; add your own through
+# gnome_extra_settings (as more custom-keybindings/<name>/ entries) if needed.
+- name: Register the custom terminal shortcut
+  community.general.dconf:
+    key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings
+    value: "['{{ gnome_terminal_keybinding_path }}']"
+
+- name: Configure the custom terminal shortcut
+  community.general.dconf:
+    key: "{{ gnome_terminal_keybinding_path }}{{ item.key }}"
+    value: "'{{ item.value }}'"
+  loop:
+    - { key: name, value: Terminal }
+    - { key: command, value: "{{ gnome_terminal_command }}" }
+    - { key: binding, value: "{{ gnome_terminal_shortcut }}" }
+
+- name: Set the default terminal for xdg-terminal-exec ("Open in Terminal")
+  ansible.builtin.copy:
+    content: "{{ gnome_terminal_desktop_id }}\n"
+    dest: "{{ user_home }}/.config/xdg-terminals.list"
+    mode: "0644"
+
+# Workspaces ------------------------------------------------------------------
+
+- name: Use a fixed number of workspaces
+  community.general.dconf:
+    key: "{{ item.key }}"
+    value: "{{ item.value }}"
+  loop:
+    - { key: /org/gnome/mutter/dynamic-workspaces, value: "false" }
+    - { key: /org/gnome/desktop/wm/preferences/num-workspaces, value: "{{ gnome_workspaces }}" }
+    - key: /org/gnome/mutter/workspaces-only-on-primary
+      value: "{{ gnome_workspaces_only_on_primary | bool | lower }}"
+
+- name: Free Super+1..9 from the dash app launchers
+  community.general.dconf:
+    key: "/org/gnome/shell/keybindings/switch-to-application-{{ item }}"
+    value: "@as []"
+  loop: "{{ range(1, 10) | list }}"
+
+- name: Super+N switches to workspace N
+  community.general.dconf:
+    key: "/org/gnome/desktop/wm/keybindings/switch-to-workspace-{{ item }}"
+    value: "['<Super>{{ item }}']"
+  loop: "{{ range(1, [gnome_workspaces | int, 9] | min + 1) | list }}"
+
+- name: Super+Shift+N moves the focused window to workspace N
+  community.general.dconf:
+    key: "/org/gnome/desktop/wm/keybindings/move-to-workspace-{{ item }}"
+    value: "['<Super><Shift>{{ item }}']"
+  loop: "{{ range(1, [gnome_workspaces | int, 9] | min + 1) | list }}"
+
+# Extras ----------------------------------------------------------------------
+
+- name: Apply extra dconf settings
+  community.general.dconf:
+    key: "{{ item.key }}"
+    value: "{{ item.value }}"
+  loop: "{{ gnome_extra_settings | dict2items }}"

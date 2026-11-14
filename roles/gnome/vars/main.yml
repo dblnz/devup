@@ -1,0 +1,8 @@
+---
+# Python bindings the community.general.dconf module needs, per distro family.
+gnome_dconf_deps:
+  RedHat: [python3-gobject, python3-psutil, dconf]
+  Archlinux: [python-gobject, python-psutil, dconf]
+  Debian: [python3-gi, python3-psutil, dconf-cli]
+
+gnome_terminal_keybinding_path: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/terminal/

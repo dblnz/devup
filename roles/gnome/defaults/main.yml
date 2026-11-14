@@ -1,0 +1,14 @@
+---
+# Terminal launched by the shortcut and used by "Open in Terminal" (xdg-terminal-exec).
+gnome_terminal_command: ghostty
+gnome_terminal_desktop_id: com.mitchellh.ghostty.desktop
+gnome_terminal_shortcut: "<Control><Alt>t"
+
+# Fixed workspaces: Super+N switches, Super+Shift+N moves the focused window.
+# Super+1..9 normally launches dash apps; those bindings are cleared.
+gnome_workspaces: 5
+gnome_workspaces_only_on_primary: false
+
+# Any extra dconf keys, as GVariant strings, e.g.
+#   /org/gnome/desktop/interface/color-scheme: "'prefer-dark'"
+gnome_extra_settings: {}

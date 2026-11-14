@@ -45,6 +45,7 @@ Some steps are manual:
 | `roles/packages` | pacman / dnf / apt / Homebrew packages, plus the Ghostty terminal except on Ubuntu (lists in `roles/packages/vars/<os_family>.yml`) |
 | `roles/shell` | Sets zsh as the login shell and clones oh-my-zsh (pinned commit) |
 | `roles/ssh_agent` | Opt-in shared SSH agent as a systemd user service (Linux; `ssh_agent_enabled` or `--tags ssh-agent`) |
+| `roles/gnome` | Opt-in GNOME preferences via dconf: terminal shortcut + default terminal, fixed workspaces on Super+N (`gnome_enabled` or `--tags gnome`) |
 | `roles/fonts` | Installs the JetBrainsMono Nerd Font (set it in your terminal) |
 | `roles/dotfiles` | Symlinks `files/<tool>/*` into `$HOME` |
 | `roles/git` | Renders `~/.config/git/config` from `git_user_name` / `git_user_email` |
@@ -61,12 +62,34 @@ Per-machine overrides go in `host_vars/localhost.yml` (git-ignored):
 git_user_name: "Your Name"
 git_user_email: you@example.com
 ssh_agent_enabled: true   # not needed when the desktop runs an agent (GNOME Keyring)
+gnome_enabled: true
 macspoof_enabled: true
 macspoof_interface: wlan0
 snapper_enabled: true   # btrfs root only; override snapper_settings for retention
 framework_charge_limit_enabled: true
 framework_charge_limit_percent: 60
 ```
+
+## GNOME preferences
+
+With `gnome_enabled: true` (or `--tags gnome`), the `gnome` role writes dconf settings for the
+current user. Run it from inside your GNOME session so it can reach the session D-Bus.
+
+- **Terminal**: `Ctrl+Alt+T` opens `gnome_terminal_command` (Ghostty), and `~/.config/xdg-terminals.list`
+  makes it the terminal for "Open in Terminal". The `packages` role installs Ghostty (not on
+  Ubuntu). The role replaces the custom-shortcuts list, so add any other custom shortcuts through
+  `gnome_extra_settings`.
+- **Workspaces**: `gnome_workspaces` fixed workspaces. `Super+N` switches and `Super+Shift+N` moves
+  the focused window. This clears the dash's `Super+N` app launchers.
+- **Anything else**: `gnome_extra_settings` maps dconf keys to GVariant values:
+
+  ```yaml
+  gnome_extra_settings:
+    /org/gnome/desktop/interface/color-scheme: "'prefer-dark'"
+    /org/gnome/desktop/wm/keybindings/close: "['<Super>q']"
+  ```
+
+  To find a key, run `dconf watch /` while changing the setting in GNOME Settings.
 
 ## Framework battery charge limit
 
