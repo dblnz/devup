@@ -42,7 +42,7 @@ Some steps are manual:
 | Path | Purpose |
 |------|---------|
 | `site.yml` | Entry point: runs the roles below |
-| `roles/packages` | pacman / dnf / apt / Homebrew packages (lists in `roles/packages/vars/<os_family>.yml`) |
+| `roles/packages` | pacman / dnf / apt / Homebrew packages, plus the Ghostty terminal except on Ubuntu (lists in `roles/packages/vars/<os_family>.yml`) |
 | `roles/shell` | Sets zsh as the login shell and clones oh-my-zsh (pinned commit) |
 | `roles/ssh_agent` | Opt-in shared SSH agent as a systemd user service (Linux; `ssh_agent_enabled` or `--tags ssh-agent`) |
 | `roles/fonts` | Installs the JetBrainsMono Nerd Font (set it in your terminal) |
@@ -83,6 +83,7 @@ A few tools are not in the Fedora repos, so the playbook adds these sources:
 |------|--------|
 | `mise` | Upstream RPM repo (`mise.jdx.dev/rpm`) |
 | `starship`, `bottom` | COPR repos `atim/starship` and `atim/bottom` |
+| `ghostty` | COPR repo `scottames/ghostty` |
 
 ## Ubuntu packages
 

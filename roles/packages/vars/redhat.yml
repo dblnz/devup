@@ -15,6 +15,10 @@ packages_dnf_repos:
     description: Copr repo for bottom owned by atim
     baseurl: https://download.copr.fedorainfracloud.org/results/atim/bottom/fedora-$releasever-$basearch/
     gpgkey: https://download.copr.fedorainfracloud.org/results/atim/bottom/pubkey.gpg
+  - name: copr-scottames-ghostty
+    description: Copr repo for ghostty owned by scottames
+    baseurl: https://download.copr.fedorainfracloud.org/results/scottames/ghostty/fedora-$releasever-$basearch/
+    gpgkey: https://download.copr.fedorainfracloud.org/results/scottames/ghostty/pubkey.gpg
 
 system_packages:
   # Equivalent of Arch's base-devel
@@ -68,6 +72,7 @@ system_packages:
   - zsh-autosuggestions
   - zsh-syntax-highlighting
   - tmux
+  - ghostty
   - starship
   - zoxide
   - direnv

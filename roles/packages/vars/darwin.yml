@@ -1,4 +1,7 @@
 ---
+packages_casks:
+  - ghostty
+
 system_packages:
   - coreutils
   - findutils

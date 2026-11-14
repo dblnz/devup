@@ -36,6 +36,7 @@ system_packages:
   - zsh-autosuggestions
   - zsh-syntax-highlighting
   - tmux
+  - ghostty
   - starship
   - zoxide
   - direnv

@@ -49,3 +49,9 @@
     name: "{{ system_packages }}"
     state: present
   when: ansible_facts['os_family'] == 'Darwin'
+
+- name: Install apps (Homebrew casks)
+  community.general.homebrew_cask:
+    name: "{{ packages_casks }}"
+    state: present
+  when: ansible_facts['os_family'] == 'Darwin'
